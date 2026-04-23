@@ -1,47 +1,47 @@
 # Decision Log
 
-Architekturelle Entscheidungen fuer `browser-llm-demo`. Jede Entscheidung hat Status, Datum, Owner, Rationale.
-Neue Entscheidungen starten als `proposed` und werden vom Owner auf `accepted` gesetzt.
+Architectural decisions for `browser-llm-demo`. Each entry records status, date, owner, and rationale.
+New decisions start as `proposed` and are promoted to `accepted` by the owner.
 
 ---
 
-## DEC-001: MediaPipe `tasks-genai` als Browser-LLM-Runtime
+## DEC-001: MediaPipe `tasks-genai` as the browser LLM runtime
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Wir nutzen `@mediapipe/tasks-genai` (Google LiteRT WASM) fuer browser-lokale Gemma-4-Inferenz.
-- **Rationale**: Einzige produktionsreife Browser-Runtime mit offiziellem Gemma-4-Support (via `litert-community` Mirror). WebLLM (MLC) laueft nur mit eigener Model-Konvertierung, `transformers.js` hat fuer Gemma 4 noch keinen Pfad. MediaPipe liefert WebGPU-Beschleunigung + WASM-Fallback out of the box.
+- **Decision**: We use `@mediapipe/tasks-genai` (Google LiteRT WASM) for browser-local Gemma 4 inference.
+- **Rationale**: The only production-ready browser runtime with official Gemma 4 support (via the `litert-community` mirror). WebLLM (MLC) requires custom model conversion; `transformers.js` has no Gemma 4 path yet. MediaPipe ships WebGPU acceleration + WASM fallback out of the box.
 - **Affected modules**:
   - `src/lib/mediapipe-llm.ts`
   - `scripts/copy-wasm.mjs`
-  - `vite.config.ts` (COOP/COEP-Header + WASM runtime cache)
+  - `vite.config.ts` (COOP/COEP headers + WASM runtime cache)
 
 ---
 
-## DEC-002: Direct HF-Download + OPFS-Cache (kein Auth, kein Mirror)
+## DEC-002: Direct HF download + OPFS cache (no auth, no mirror)
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Modelle werden per plain `fetch()` direkt von `huggingface.co/litert-community/*` geladen und in OPFS gecached.
-- **Rationale**: `litert-community`-Modelle sind public + ungated + Apache-2.0 — kein Token noetig. `@huggingface/hub` wie im Upstream-Sample bringt OAuth-Overhead fuer einen Fall den wir nicht haben. OPFS ist die einzige Browser-Storage-API mit File-Handle-Semantik fuer Multi-GB-Daten. Eigener Mirror (R2/MinIO) kommt nur wenn HF-SPOF-Risiko relevant wird (Roadmap).
+- **Decision**: Models are loaded via plain `fetch()` directly from `huggingface.co/litert-community/*` and cached in OPFS.
+- **Rationale**: `litert-community` models are public + ungated + Apache-2.0 — no token needed. The `@huggingface/hub` library used in the upstream sample adds an OAuth layer we don't need. OPFS is the only browser storage API with file-handle semantics suitable for multi-GB blobs. A self-hosted mirror (R2/MinIO) only becomes relevant if HF as a single point of failure is a concern (roadmap).
 - **Affected modules**:
   - `src/lib/opfs-cache.ts`
   - `src/lib/model-catalog.ts`
 
 ---
 
-## DEC-003: `useExternalStoreRuntime` (nicht `useLocalRuntime`)
+## DEC-003: `useExternalStoreRuntime` (not `useLocalRuntime`)
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: assistant-ui wird via `useExternalStoreRuntime` angebunden, Messages leben in Zustand + Dexie.
-- **Rationale**: `useLocalRuntime` haelt genau einen Thread in-memory. Fuer Multi-Conversation mit Persistenz muessen wir die Messages selbst halten — der External-Store-Adapter gibt uns gleichzeitig den `threadList`-Hook, der `ThreadListPrimitive` in der Sidebar direkt versorgt.
+- **Decision**: assistant-ui is wired through `useExternalStoreRuntime`; messages live in Zustand + Dexie.
+- **Rationale**: `useLocalRuntime` keeps exactly one thread in memory. For multi-conversation with persistence we need to own the messages ourselves — the external-store adapter also gives us the `threadList` hook that feeds `ThreadListPrimitive` in the sidebar.
 - **Affected modules**:
   - `src/hooks/useLlmRuntime.ts`
   - `src/lib/chat-store.ts`
@@ -50,86 +50,85 @@ Neue Entscheidungen starten als `proposed` und werden vom Owner auf `accepted` g
 
 ---
 
-## DEC-004: Atomic Design Folder Structure
+## DEC-004: Atomic Design folder structure
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Components sind nach Brad Frosts Atomic Design strukturiert: `atoms/ molecules/ organisms/ templates/ pages/`.
-- **Rationale**: Klare Dependency-Grenzen (Atoms kennen keine Domain, Organisms duerfen Stores ziehen) vereinfachen Scaffold-Reuse. Alternative "flat components/" ging auf 7+ Files ohne offensichtliche Rangfolge.
+- **Decision**: Components are organized per Brad Frost's Atomic Design: `atoms / molecules / organisms / templates / pages`.
+- **Rationale**: Clear dependency direction (atoms know nothing about the domain; organisms may pull stores) simplifies scaffold reuse. The alternative — a flat `components/` — became unwieldy past 7 files.
 - **Affected modules**:
   - `src/components/{atoms,molecules,organisms,templates,pages}/`
 
 ---
 
-## DEC-005: Dark-Theme-Only fuer MVP
+## DEC-005: Dark-theme-only for the MVP
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Die App rendert ausschliesslich im Dark-Theme. Keine `dark:`-Tailwind-Varianten, kein `prefers-color-scheme: light`-Branch.
-- **Rationale**: Initial wurde Dual-Theme versucht, aber Tailwinds `dark:`-Prefix und die Body-CSS-Media-Query kollidierten (heller Background + heller Text in Dark-Mode = unsichtbare Cards). Dark-only eliminiert die Bug-Klasse komplett, reduziert Class-Noise, passt zum Brand. Light-Mode ist Roadmap.
+- **Decision**: The app renders dark-theme only. No Tailwind `dark:` variants, no `prefers-color-scheme: light` branch.
+- **Rationale**: An initial dual-theme attempt collapsed because Tailwind's `dark:` prefix and the body CSS media query contradicted each other (light background with light text in dark mode — invisible cards). Dark-only eliminates the entire bug class, reduces class noise, and matches the brand. Light mode is a roadmap item.
 - **Affected modules**:
   - `src/styles.css`
-  - Alle `src/components/**`
+  - All `src/components/**`
 
 ---
 
-## DEC-006: Vite 6 + `vite-plugin-pwa` (nicht Next.js)
+## DEC-006: Vite 6 + `vite-plugin-pwa` (not Next.js)
 
 - **Status**: accepted
 - **Date**: 2026-04-23
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Build-Stack ist Vite + vite-plugin-pwa. Kein SSR-Framework.
-- **Rationale**: App ist 100 % client-side (LLM laeuft im Browser). SSR waere toter Overhead. Vite liefert minimalen Bundle (518 KB), PWA-Plugin ist ausgereift, COOP/COEP-Headers easy zu setzen. Yesterday-Standard-Stack.
+- **Decision**: Build stack is Vite + vite-plugin-pwa. No SSR framework.
+- **Rationale**: The app is 100 % client-side (the LLM runs in the browser). SSR would be pure overhead. Vite produces a lean bundle (~520 KB), the PWA plugin is mature, COOP/COEP headers are easy to set. Matches the Yesterday stack.
 - **Affected modules**:
   - `vite.config.ts`
   - `package.json`
 
 ---
 
-## DEC-007: Lean i18n ohne react-i18next
+## DEC-007: Lean i18n without react-i18next
 
 - **Status**: accepted
 - **Date**: 2026-04-24
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Eigenes typed `useT()` + zwei flat dictionaries (`de.ts`, `en.ts`) statt react-i18next / FormatJS.
-- **Rationale**: Ein Chat-Prototyp hat ~70 Strings — react-i18next (30+ KB) ist Overkill. Unsere Implementation ist ~40 Zeilen: `translate(locale, key, vars)` + `useT()`-Hook + auto-locale via `navigator.language`. TypeScript-Key-Validierung aus `keyof typeof de`. Scaffold-Fork-Friendly: neue Sprache = neue Datei, kein Runtime-Framework-Wissen.
+- **Decision**: Custom typed `useT()` + two flat dictionaries (`de.ts`, `en.ts`) instead of react-i18next / FormatJS.
+- **Rationale**: A chat prototype has ~70 strings — react-i18next (30+ KB) is overkill. Our implementation is ~40 lines: `translate(locale, key, vars)` + a `useT()` hook + auto-locale via `navigator.language`. TypeScript key validation via `keyof typeof de`. Scaffold-fork friendly: a new language is a new file, no runtime framework knowledge required.
 - **Affected modules**:
   - `src/lib/i18n/{de,en,types,index}.ts`
   - `src/lib/taglines.ts`
-  - `src/components/**` (alle user-facing Components)
+  - `src/components/**` (all user-facing components)
 
 ---
 
-## DEC-008: GitHub Pages + coi-serviceworker (nicht Cloudflare)
+## DEC-008: GitHub Pages + in-SW COI header injection (not Cloudflare)
 
 - **Status**: accepted
 - **Date**: 2026-04-24
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Deploy via GitHub Pages, COOP/COEP-Header werden client-side von `coi-serviceworker.js` injected.
-- **Rationale**: MediaPipe braucht `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` fuer SharedArrayBuffer (threaded WASM). GitHub Pages unterstuetzt keine Custom-Header. Cloudflare Pages waere technisch einfacher (nativer `_headers`-Support), widerspricht aber dem "free + open"-Gedanken dieses Scaffolds. `coi-serviceworker` (gzuidhof, MIT, 2 KB) registriert einen SW der beim ersten Visit die Page einmal reloaded und dann COOP/COEP-Header lokal hinzufuegt. Standard-Pattern in der Browser-LLM-Szene.
+- **Decision**: Deploy via GitHub Pages. COOP/COEP headers are injected client-side by the service worker (`src/sw.ts`).
+- **Rationale**: MediaPipe needs `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp` for SharedArrayBuffer (threaded WASM). GitHub Pages doesn't support custom response headers. Cloudflare Pages would be technically simpler (native `_headers` support) but conflicts with the "free + open" spirit of this scaffold. Our `src/sw.ts` merges Workbox precache/runtime-cache with COI header injection via plugin hooks (`fetchDidSucceed` + `cachedResponseWillBeUsed`) — a single service worker, no scope collisions. Earlier attempt with the standalone `coi-serviceworker.js` alongside vite-plugin-pwa's generated SW failed due to dueling SWs at the same scope (last registered wins).
 - **Affected modules**:
-  - `public/coi-serviceworker.js`
-  - `index.html`
+  - `src/sw.ts`
+  - `vite.config.ts` (strategies: "injectManifest", base path, manifest)
   - `.github/workflows/deploy.yml`
-  - `vite.config.ts` (`base` + conditional PROJECT.basePath)
 
 ---
 
-## DEC-009: User-editable Settings (maxTokens, sampling, system-prompt, locale)
+## DEC-009: User-editable settings (maxTokens, sampling, system prompt, locale)
 
 - **Status**: accepted
 - **Date**: 2026-04-24
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: Claude Code
-- **Decision**: Settings-Dialog mit Persistenz in `localStorage`, Per-Model-Defaults in `MODEL_CATALOG`, User-Override per Slider.
-- **Rationale**: Initialer Default von `maxTokens: 1024` war zu knapp (Kontext-Fenster combined input+output); E2B schafft nativ bis 128K. Aber KV-Cache skaliert linear = GPU-RAM-Impact. Per-Model Default (E2B: 32K, E4B: 16K) + User-override bis MODEL_MAX_TOKENS (128K). Gleiche Logik fuer temperature (0.7) und topK (40) — Google-Empfehlung (1.0/64) war zu kreativ fuer Chat. System-Prompt: `null` = i18n-Default, `""` = keiner, String = custom. Locale: `auto` | `de` | `en`.
+- **Decision**: Settings dialog persisted in `localStorage`; per-model defaults in `MODEL_CATALOG`; user override via sliders.
+- **Rationale**: The initial default of `maxTokens: 1024` was too small (it is combined input + output; E2B natively supports up to 128K). But KV cache scales linearly with GPU RAM. Per-model default (E2B: 32K, E4B: 16K) + user override up to `MODEL_MAX_TOKENS` (128K). Same logic for temperature (0.7) and top-K (40) — Google's general-generation defaults (1.0 / 64) were too creative for chat. System prompt tri-state: `null` = i18n default, `""` = no system prompt, custom string = override. Locale: `auto` | `de` | `en`.
 - **Affected modules**:
   - `src/lib/settings-store.ts`
   - `src/lib/model-catalog.ts` (per-model `maxTokens` + `MODEL_MAX_TOKENS`)
@@ -140,17 +139,17 @@ Neue Entscheidungen starten als `proposed` und werden vom Owner auf `accepted` g
 
 ---
 
-## Template fuer neue Entscheidungen
+## Template for new decisions
 
 ```markdown
-## DEC-00X: <Titel>
+## DEC-00X: <title>
 
 - **Status**: proposed | accepted | superseded
 - **Date**: YYYY-MM-DD
-- **Owner**: Yesterday Founder
+- **Owner**: Yesterday founder
 - **Proposed-by**: <agent-or-human>
-- **Decision**: <ein Satz>
-- **Rationale**: <warum das statt Alternativen>
+- **Decision**: <one sentence>
+- **Rationale**: <why this over the alternatives>
 - **Supersedes**: DEC-00Y (optional)
 - **Affected modules**:
     - `src/...`

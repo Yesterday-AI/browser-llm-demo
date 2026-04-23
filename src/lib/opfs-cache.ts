@@ -1,6 +1,6 @@
-// Portiert aus google-ai-edge/mediapipe-samples/examples/llm_inference/llm_chat_ts/src/opfs_cache.ts
-// (Apache-2.0). Aenderungen: Progress-Callback, AbortController, UI-Warnungen statt alert(),
-// expliziter persist()-Request. Nicht portiert: OAuth-Flow (litert-community ist public).
+// Ported from google-ai-edge/mediapipe-samples/examples/llm_inference/llm_chat_ts/src/opfs_cache.ts
+// (Apache-2.0). Changes: progress callback, AbortController, UI warnings instead of alert(),
+// explicit persist() request. Not ported: the OAuth flow (litert-community models are public).
 
 export type DownloadPhase = "checking-cache" | "downloading" | "cached" | "initializing-runtime";
 
@@ -22,7 +22,7 @@ const SIZE_SUFFIX = "_size";
 
 async function getRoot(): Promise<FileSystemDirectoryHandle> {
   if (!("storage" in navigator) || !("getDirectory" in navigator.storage)) {
-    throw new Error("OPFS nicht verfuegbar — Browser zu alt");
+    throw new Error("OPFS not available — browser too old");
   }
   return await navigator.storage.getDirectory();
 }
@@ -75,7 +75,7 @@ async function ensureQuota(required: number): Promise<void> {
   const available = (estimate.quota ?? 0) - (estimate.usage ?? 0);
   if (available < required * 1.05) {
     throw new Error(
-      `Nicht genug Speicher im Browser-Cache (verfuegbar ${formatBytes(available)}, benoetigt ${formatBytes(required)})`,
+      `Not enough browser cache space (available ${formatBytes(available)}, need ${formatBytes(required)})`,
     );
   }
 }
@@ -107,7 +107,7 @@ export async function loadModelWithCache(
 
   const response = await fetch(url, { signal });
   if (!response.ok || !response.body) {
-    throw new Error(`Download fehlgeschlagen: HTTP ${response.status}`);
+    throw new Error(`Download failed: HTTP ${response.status}`);
   }
 
   const contentLength = Number(response.headers.get("content-length")) || expectedSize;

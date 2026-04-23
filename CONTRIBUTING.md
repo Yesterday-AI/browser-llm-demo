@@ -1,54 +1,54 @@
 # Contributing
 
-Dieses Repo ist ein **Yesterday Browser-LLM-Scaffold**. Beitraege sind willkommen,
-der Anspruch ist: jeder Commit haelt Typecheck, Lint und Build gruen.
+This repo is a **Yesterday browser-LLM scaffold**. Contributions are welcome.
+The bar is simple: every commit keeps typecheck, lint, and build green.
 
-## Dev-Setup
+## Dev setup
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Node 22, pnpm 10. Erster Model-Download ~2.6 GB — WLAN empfohlen.
+Node 22, pnpm 10. First model download is ~2.6 GB — Wi-Fi recommended.
 
 ## Workflow
 
-1. Branch off `main`, kurze beschreibende Namen (`feat/model-picker-warnings`, `fix/ios-opfs-quota`)
-2. Commits in Conventional-Commits-Form (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`)
-3. Vor PR lokal: `pnpm lint && pnpm typecheck && pnpm build` — alle drei gruen
-4. PR-Beschreibung folgt `.github/pull_request_template.md`
-5. Bei nicht-trivialen Design-Aenderungen: neuer Eintrag in `DECISIONS.md` (Status `proposed`)
+1. Branch off `main` with a short descriptive name (`feat/model-picker-warnings`, `fix/ios-opfs-quota`)
+2. Commits in Conventional Commits format (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`)
+3. Before opening a PR, locally: `pnpm lint && pnpm typecheck && pnpm build` — all three green
+4. PR description follows `.github/pull_request_template.md`
+5. For non-trivial design changes, add a `DECISIONS.md` entry with status `proposed`
 
-## Code-Standards
+## Code standards
 
-- **TypeScript strict** — keine `any`, keine `as`-Assertions ausser an Runtime-Grenzen
-- **Biome** fuer Format + Lint — `pnpm format` vor commit. Kein ESLint/Prettier parallel.
-- **Imports:** Barrel-Files in `atoms/molecules/organisms/` verwenden
-- **Atomic Design Layering** — atoms kennen keine Domain, organisms koennen Stores ziehen. Siehe `src/components/` Struktur.
-- **Keine Kommentare** die wiederholen was der Code sagt. Nur fuer non-obvious Constraints.
+- **TypeScript strict** — no `any`, no `as` assertions except at runtime boundaries
+- **Biome** for format + lint — run `pnpm format` before commit. No ESLint/Prettier alongside.
+- **Imports**: use the barrel files in `atoms/molecules/organisms/`
+- **Atomic Design layering** — atoms know nothing about the domain; organisms may pull stores. See `src/components/`.
+- **No comments** that restate what the code already says. Only for non-obvious constraints.
 
 ## Tests
 
-Aktuell kein Test-Setup im MVP — Vitest + Playwright in der Roadmap.
-Bis dahin: manuelles End-to-End per `pnpm dev` auf Desktop Chrome, Android Chrome (via `--host`) und iOS Safari.
+No test suite yet in the MVP — Vitest + Playwright are on the roadmap.
+Until then: manual end-to-end via `pnpm dev` on Desktop Chrome, Android Chrome (via `--host`), and iOS Safari.
 
-## Dokumentations-Regel
+## Documentation rule
 
-- **AGENTS.md** bei Architektur-Aenderungen aktualisieren
-- **CONTEXT.md** bei Modul-Verschiebungen
-- **DECISIONS.md** bei non-trivialen Entscheidungen (Status: proposed → accepted)
-- **ROADMAP.md** wenn Items Status wechseln
-- **CHANGELOG.md** bei Releases (Keep-a-Changelog-Format)
+- Update **AGENTS.md** on architecture changes
+- Update **CONTEXT.md** when modules move
+- Update **DECISIONS.md** on non-trivial decisions (status: proposed → accepted)
+- Update **ROADMAP.md** when item status changes
+- Update **CHANGELOG.md** on releases (Keep a Changelog format)
 
 ## Issues
 
-- Bug-Reports: Template in `.github/ISSUE_TEMPLATE/bug_report.md`
-- Feature-Requests: Template in `.github/ISSUE_TEMPLATE/feature_request.md`
+- Bug reports: template in `.github/ISSUE_TEMPLATE/bug_report.md`
+- Feature requests: template in `.github/ISSUE_TEMPLATE/feature_request.md`
 
 ## Governance
 
-- **Owner / Entscheidung**: Yesterday Founder
-- **AI-Implementierung**: Claude Code
+- **Owner / decision authority**: Yesterday founder
+- **AI implementation**: Claude Code
 
-Entscheidungen > 1 Modul beruehrend brauchen einen DEC-xxx-Eintrag bevor sie gemergt werden.
+Decisions that touch more than one module need a `DEC-xxx` entry before they merge.

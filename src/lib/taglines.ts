@@ -1,9 +1,9 @@
 import type { Locale } from "./i18n/index.ts";
 
-// Trockene Privacy-first Taglines, rotieren zufaellig beim Landing.
-// Stil: OpenClaw CLI / Fleet Manager — knapp, selbstironisch, ohne Marketing-Sosse.
-// Bewusst modell-agnostisch damit Scaffold-Forks (Qwen/DeepSeek/Llama/...) ohne
-// Tagline-Edit lauffaehig bleiben.
+// Dry privacy-first taglines, picked at random on landing.
+// Tone: OpenClaw CLI / Fleet Manager — short, self-ironic, zero marketing gloss.
+// Intentionally model-agnostic so scaffold forks (Qwen / DeepSeek / Llama / …)
+// stay functional without editing this file.
 
 const TAGLINES_DE: readonly string[] = [
   "Dein Tab. Deine GPU. Deine Regeln.",

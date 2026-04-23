@@ -1,15 +1,15 @@
-// Gemma 4 Chat-Template (canonical Jinja from HF tokenizer_config):
+// Gemma 4 chat template (canonical Jinja from the HF tokenizer_config):
 // <start_of_turn>user\n{content}<end_of_turn>\n
 // <start_of_turn>model\n{content}<end_of_turn>\n
 // ...
-// <start_of_turn>model\n   ← Prompt-Ende, Modell generiert ab hier
+// <start_of_turn>model\n   ← end of prompt; the model generates from here.
 //
-// BOS wird NICHT manuell prepended — MediaPipes Tokenizer fuegt BOS automatisch
-// hinzu (Gemmas tokenizer config: add_bos_token=true). Doppel-BOS verwirrt das
-// Modell.
+// BOS is NOT prepended manually — MediaPipe's tokenizer adds it automatically
+// (Gemma tokenizer config has `add_bos_token: true`). A double BOS confuses
+// the model.
 //
-// Historische Nachrichten werden defensiv von geleakten Stop-Tokens bereinigt,
-// falls noch welche aus frueheren Sessions in IndexedDB liegen.
+// Historical messages are defensively sanitized against leaked stop tokens in
+// case any are still sitting in IndexedDB from earlier sessions.
 
 export type Role = "user" | "assistant" | "system";
 export type Turn = { role: Role; content: string };

@@ -1,11 +1,11 @@
-// Project-level identity constants. Scaffold-clones override here, nicht in
-// Env-Variablen — diese Werte sind Deploy-invariant fuer einen Fork.
+// Project-level identity constants. Scaffold forks override these values here,
+// not via env vars — they are deploy-invariant for a given fork.
 
 export const PROJECT = {
   // npm + repo name + manifest identifier (kebab-case, long form).
   name: "browser-llm-demo",
-  // Short label shown in the Header. Keep compact — long scaffold names
-  // eat mobile layout. Scaffold-forks set this to their actual app name.
+  // Short label shown in the header. Keep it compact — long scaffold names
+  // eat mobile layout. Forks override this to their actual app name.
   displayName: "browser-llm",
   // Public GitHub repo. Set to null to hide the icon on the landing page.
   githubUrl: "https://github.com/yesterday-ai/browser-llm-demo" as string | null,

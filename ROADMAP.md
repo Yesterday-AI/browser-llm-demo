@@ -1,121 +1,114 @@
 # Roadmap
 
-Priorisierte Features und Erweiterungen. Jeder Eintrag hat Priority, Status, Problem, Constraints, Approach, Acceptance-Criteria.
+Prioritized features and extensions. Each entry has priority, status, why, constraints, approach, and acceptance criteria.
 
 ## Done (in 0.1.0)
 
-- PWA Icons PNG Upgrade (2026-04-23)
-- i18n DE + EN (2026-04-24) — see below entry
-- User-editable Settings Dialog (2026-04-24) — maxTokens, sampling, system prompt, locale. See DEC-009.
-- Per-message Stats (2026-04-24) — TTFT, duration, token count, tok/s
-- GitHub Pages Deploy + `coi-serviceworker` (2026-04-24) — see DEC-008
+- **PWA PNG icon upgrade** (2026-04-23) — real 192/512 PNGs + SVG fallback + maskable variant in the manifest
+- **i18n DE + EN** (2026-04-24) — see entry below. See DEC-007.
+- **User-editable settings dialog** (2026-04-24) — maxTokens, sampling, system prompt, locale. See DEC-009.
+- **Per-message stats** (2026-04-24) — TTFT, duration, token count, tok/s
+- **GitHub Pages deploy + in-SW COI injection** (2026-04-24) — see DEC-008
 
 ## High
 
-### PWA-Icons PNG-Upgrade fertigstellen
-
-- **Status**: Done (2026-04-23)
-- **Why**: Chrome/Edge bevorzugen PNG fuer A2HS-Install-Criteria; SVG-only Icons werden teilweise abgelehnt.
-- **Approach**: Echte 192/512-PNGs + SVG-Fallback im Manifest, separate maskable-Variante.
-- **Acceptance criteria**: Lighthouse PWA-Audit ≥ 90, Android-Chrome zeigt Install-Prompt automatisch.
-
-### Live-E2E-Test MediaPipe-Format
+### Live end-to-end test with real MediaPipe format
 
 - **Status**: Not started
-- **Why**: `.task`-Format-Kompatibilitaet mit `@mediapipe/tasks-genai@0.10.27` ist nicht verifiziert. Risiko: Format-Mismatch blockiert Download → Load-Flow.
-- **Constraints**: Test muss auf echtem Browser laufen (Desktop Chrome + Android), nicht nur unit.
-- **Approach**: `pnpm dev` → Modell herunterladen, erste Prompt absenden, Streaming verifizieren. Falls Format nicht passt: `.litertlm` statt `.task` ausprobieren.
-- **Acceptance criteria**: E2B und E4B laden ohne Error, beide streamen Tokens, Reload nutzt OPFS-Cache.
+- **Why**: `.task` format compatibility with `@mediapipe/tasks-genai@0.10.27` hasn't been verified in a live session. Risk: format mismatch blocks the download → load flow.
+- **Constraints**: Test must run in a real browser (Desktop Chrome + Android), not just unit tests.
+- **Approach**: `pnpm dev` → download the model → send a first prompt → verify streaming. If the format doesn't match, try `.litertlm` instead of `.task`.
+- **Acceptance criteria**: E2B and E4B both load without errors, both stream tokens, reload uses the OPFS cache.
 
 ## Medium
 
-### AG-UI-Protocol-Layer
+### AG-UI protocol layer
 
 - **Status**: Not started
-- **Why**: Zukunftsfaehigkeit fuer Multi-Agent-Szenarien; Deutschland-Stack listet AG-UI (sandbox) fuer OER-Kontext.
-- **Constraints**: In-Process-Agent bleibt Default, AG-UI ist additive Schicht.
-- **Approach**: `AbstractAgent`-Subclass `LocalGemmaAgent` die via RxJS Observable die MediaPipe-Generator-Chunks als `TEXT_MESSAGE_CONTENT`-Events emittet. `useLlmRuntime` bleibt Alternative; User kann zwischen Modi wechseln.
-- **Acceptance criteria**: Gleiche Conversations funktionieren mit AG-UI-Runtime UND External-Store-Runtime; Switch ueber Config-Flag.
+- **Why**: Future-proofing for multi-agent scenarios; the Deutschland-Stack lists AG-UI (sandbox) for public-sector contexts.
+- **Constraints**: In-process agent stays the default, AG-UI is an additive layer.
+- **Approach**: An `AbstractAgent` subclass `LocalGemmaAgent` that emits MediaPipe generator chunks as `TEXT_MESSAGE_CONTENT` events via an RxJS Observable. `useLlmRuntime` remains available; users can switch between modes.
+- **Acceptance criteria**: The same conversations work with the AG-UI runtime AND the external-store runtime; switch via config flag.
 
-### MCP-Tool-Use
-
-- **Status**: Not started
-- **Why**: Agent-Capabilities ueber reinen Chat hinaus (Web-Fetch, Calculator, Local-Tools).
-- **Constraints**: Gemma 4 muss Function-Calling zuverlaessig unterstuetzen; nur public MCP-Server (keine Auth im MVP).
-- **Approach**: `@modelcontextprotocol/sdk` Client im Browser, Tool-Definitionen in Prompt einflechten, Tool-Calls aus Modell-Output parsen und an MCP-Server dispatchen.
-- **Acceptance criteria**: Mindestens ein Test-Tool (Calculator) funktioniert end-to-end; Error-Handling bei Tool-Fehler.
-
-### RAG mit `@mediapipe/tasks-text` Embeddings
+### MCP tool use
 
 - **Status**: Not started
-- **Why**: Lokaler Kontext-Injection (Dokumente, Notes) ohne Cloud-Abhaengigkeit.
-- **Constraints**: Alles im Browser, kein Server. Embedding-Index muss in IndexedDB passen.
-- **Approach**: `TextEmbedder` via MediaPipe, Embeddings in IndexedDB mit Cosine-Similarity-Suche (kein dedicated Vector-DB im Browser).
-- **Acceptance criteria**: 100-Dokumente-Index, Query < 200 ms p95, relevante Chunks werden in Prompt injected.
+- **Why**: Agent capabilities beyond plain chat (web fetch, calculator, local tools).
+- **Constraints**: Gemma 4 has to support function calling reliably; MVP supports public MCP servers only (no auth).
+- **Approach**: `@modelcontextprotocol/sdk` client in the browser, tool definitions woven into the prompt, tool calls parsed from model output and dispatched to the MCP server.
+- **Acceptance criteria**: At least one test tool (calculator) works end-to-end; errors are surfaced in the chat.
 
-### i18n (DE/EN)
+### RAG with `@mediapipe/tasks-text` embeddings
+
+- **Status**: Not started
+- **Why**: Local context injection (documents, notes) without any cloud dependency.
+- **Constraints**: All in-browser, no server. The embedding index must fit in IndexedDB.
+- **Approach**: `TextEmbedder` via MediaPipe, embeddings in IndexedDB with cosine-similarity search (no dedicated vector DB in-browser).
+- **Acceptance criteria**: 100-document index, query < 200 ms p95, relevant chunks are injected into the prompt.
+
+### i18n (DE / EN)
 
 - **Status**: Done (2026-04-24)
-- **Why**: Scaffold wird fuer verschiedene Kunden genutzt, deutsche UI ist Default aber EN muss Option sein.
-- **Approach**: Custom `useT()` ohne Framework (~40 LOC), String-Keys in `src/lib/i18n/{de,en}.ts`, Language-Detector via `navigator.language`, UI-Override in Settings-Dialog.
-- **Outcome**: Alle User-facing Strings via `t()`, System-Sprache auto-detect, manueller Override in Settings (`auto` | `de` | `en`). Siehe DEC-007.
+- **Why**: The scaffold is used for varied customers — German UI is the Yesterday default, but English must be an option.
+- **Approach**: Custom `useT()` without a framework (~40 LOC), string keys in `src/lib/i18n/{de,en}.ts`, language detection via `navigator.language`, UI override in the settings dialog.
+- **Outcome**: All user-facing strings via `t()`, system language auto-detect, manual override in settings (`auto` | `de` | `en`). See DEC-007.
 
 ## Low
 
-### Persona-Presets
+### Persona presets
 
 - **Status**: Not started
-- **Why**: Wiederkehrende System-Prompts (Assistent, Coder, Kreativ-Schreiber) ohne jedes Mal manuell einzutippen.
-- **Approach**: Eigene Dexie-Tabelle + UI-Picker in Conversation-Settings.
-- **Acceptance criteria**: Mindestens 3 Presets, per-Conversation-Auswahl, eigene Personas speicherbar.
+- **Why**: Recurring system prompts (assistant, coder, creative writer) without retyping them every time.
+- **Approach**: Own Dexie table + UI picker in conversation settings.
+- **Acceptance criteria**: At least 3 presets, per-conversation selection, custom personas persistable.
 
-### Voice-I/O
-
-- **Status**: Not started
-- **Why**: Accessibility + Mobile-UX.
-- **Approach**: Web-Speech-API fuer Input (STT), TTS ueber `SpeechSynthesis`. Optional on-device Whisper fuer bessere Qualitaet.
-- **Acceptance criteria**: Push-to-talk im Composer, TTS-Button auf Assistant-Bubbles.
-
-### Export/Import Conversations (Markdown/JSON)
+### Voice I/O
 
 - **Status**: Not started
-- **Why**: Backup + Sharing.
-- **Approach**: Download-Button pro Conversation → Markdown mit Metadaten im Frontmatter. Import-Button liest die Struktur zurueck.
-- **Acceptance criteria**: Round-Trip Export→Import erhaelt Message-IDs, Timestamps, Roles.
+- **Why**: Accessibility + mobile UX.
+- **Approach**: Web Speech API for input (STT), TTS via `SpeechSynthesis`. Optional on-device Whisper for better quality.
+- **Acceptance criteria**: Push-to-talk in the composer, TTS button on assistant bubbles.
 
-### Yesterday Corporate Theming
-
-- **Status**: Not started
-- **Why**: Wenn als Scaffold graduiert, sollte Projekt-spezifisches Branding einfach anpassbar sein.
-- **Approach**: CSS-Variablen in `@theme` (statt harter Tailwind-Klassen fuer Brand-Farben), Theming-Doc in CONTRIBUTING.
-- **Acceptance criteria**: Drei ENV-Variablen oder Config-Block andern reicht fuer Rebrand, keine Component-Edits.
-
-### Playwright-E2E-Tests
+### Export / import conversations (Markdown / JSON)
 
 - **Status**: Not started
-- **Why**: Regression-Sicherheit vor Prod-Deployment.
-- **Constraints**: Modell-Download kann in CI nicht 2 GB ziehen → Mock-LLM-Adapter fuer Tests.
-- **Approach**: `@playwright/test`, Mock-Adapter der vordefinierte Tokens yields, Test-Scenarios: Download-Flow, Chat-Send, Conversation-Switch.
-- **Acceptance criteria**: Mindestens 5 Scenarios gruen, < 30 s total.
+- **Why**: Backup + sharing.
+- **Approach**: Download button per conversation → Markdown with metadata in frontmatter. Import button reads the structure back.
+- **Acceptance criteria**: Round-trip export → import preserves message IDs, timestamps, roles.
 
-### Alternative Modelle (Qwen, DeepSeek)
-
-- **Status**: Not started
-- **Why**: Nicht alle Use-Cases passen zu Gemma; mehrsprachige Kunden wollen evtl. Qwen.
-- **Approach**: Sobald `litert-community` andere Modelle in `.task`-Format anbietet, `MODEL_CATALOG` erweitern.
-- **Acceptance criteria**: Mindestens ein non-Gemma-Modell waehlbar, Prompt-Template-Abstraktion beherrscht beide Formate.
-
-### `<input type=file>` Offline-Model-Loading
+### Light theme
 
 - **Status**: Not started
-- **Why**: Kiosk / Air-Gapped / Firmen-Firewalls die HF blocken.
-- **Approach**: File-Picker im Download-UI, akzeptiert `.task`-Files direkt, speichert in OPFS unter bekanntem Key.
-- **Acceptance criteria**: Drag-n-Drop oder File-Picker laedt lokales Modell, rest des Flows identisch.
+- **Why**: Dark-only was the MVP tradeoff (see DEC-005). Some users genuinely prefer light.
+- **Approach**: Theme tokens in `@theme` (instead of hardcoded Tailwind classes for brand colors), `data-theme` attribute on `<html>`, settings toggle.
+- **Acceptance criteria**: Both themes render correctly across all atoms/molecules/organisms, no regressions to contrast/accessibility.
 
-### Cloudflare R2 Mirror
+### Playwright E2E tests
 
 - **Status**: Not started
-- **Why**: HF-Hub-Unabhaengigkeit, eigene Control ueber Bandbreite.
-- **Constraints**: Budget fuer R2-Storage (~EUR 1/Monat), eigene Domain.
-- **Approach**: R2-Bucket mit Public-Read, Model-Files spiegeln, `MODEL_CATALOG` um alternative `repo`/`url`-Quelle erweitern.
-- **Acceptance criteria**: Download-Quelle ueber Env-Variable umschaltbar, kein Code-Change fuer R2-Switch.
+- **Why**: Regression safety before prod deployment.
+- **Constraints**: CI can't pull a 2 GB model → needs a mock LLM adapter for tests.
+- **Approach**: `@playwright/test`, mock adapter yielding predefined tokens, scenarios: download flow, chat send, conversation switch.
+- **Acceptance criteria**: At least 5 scenarios green in < 30 s total.
+
+### Alternative models (Qwen, DeepSeek)
+
+- **Status**: Not started
+- **Why**: Not every use case fits Gemma; multilingual customers may prefer Qwen.
+- **Approach**: As soon as `litert-community` offers other models in `.task` format, extend `MODEL_CATALOG`.
+- **Acceptance criteria**: At least one non-Gemma model is selectable; prompt-template abstraction handles both formats.
+
+### `<input type=file>` offline model loading
+
+- **Status**: Not started
+- **Why**: Kiosk / air-gapped / corporate firewalls blocking HF.
+- **Approach**: File picker in the download UI accepts `.task` files directly, stores them in OPFS under the known key.
+- **Acceptance criteria**: Drag-n-drop or file-picker loads a local model, rest of the flow identical.
+
+### Cloudflare R2 mirror
+
+- **Status**: Not started
+- **Why**: Independence from HF Hub, control over bandwidth.
+- **Constraints**: Budget for R2 storage (~EUR 1/month), own domain.
+- **Approach**: Public-read R2 bucket mirroring the model files; extend `MODEL_CATALOG` with an alternative `repo`/`url` source.
+- **Acceptance criteria**: Download source is switchable via env variable, no code changes needed to toggle R2.

@@ -11,12 +11,13 @@ export type InferenceOptions = {
   randomSeed?: number;
 };
 
-// Chat-Defaults.
-// WICHTIG: maxTokens in MediaPipe ist INPUT + OUTPUT combined (KV-Cache-Limit
-// beim createFromOptions-Call). Gemma 4 web-variant kann nativ 128K, aber das
-// wuerde 1-2 GB GPU-RAM extra kosten und Prefill quadratisch verlangsamen.
-// 8192 = Chat-Sweet-Spot: ~30 Turns mit System-Prompt, kein Memory-Impact.
-// Fixer randomSeed verursachte reproducible Repetition-Loops — jetzt per-Run random.
+// Chat defaults.
+// IMPORTANT: MediaPipe's `maxTokens` is INPUT + OUTPUT combined (the KV-cache
+// allocation passed to createFromOptions). Gemma 4 web variant supports up to
+// 128K natively, but that would cost 1–2 GB extra GPU RAM and make prefill
+// scale quadratically. 8192 is the chat sweet spot: ~30 turns with a system
+// prompt, no memory impact. Per-model defaults in MODEL_CATALOG override this.
+// A fixed `randomSeed` caused reproducible repetition loops — now per-run random.
 const DEFAULT_OPTIONS: Required<InferenceOptions> = {
   maxTokens: 8192,
   topK: 40,

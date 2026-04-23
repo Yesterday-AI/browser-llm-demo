@@ -22,13 +22,13 @@ Initial public release. Ships as a scaffold for building browser-local LLM chat 
 - i18n: German + English dictionaries, `navigator.language` auto-detect, `useT()` hook (~40 LOC, no framework)
 - Rotating privacy taglines on the landing page ("An LLM that doesn't phone home", etc.)
 - Key-facts footer: `0` server calls · `100 %` browser-local · `Apache 2.0` + GitHub link
-- PWA: manifest, service worker (CacheFirst for WASM), install prompt, offline indicator
+- PWA: manifest, installable, offline indicator, install prompt
+- Custom service worker (`src/sw.ts`) — Workbox precache + runtime cache for WASM + client-side COOP/COEP header injection so SharedArrayBuffer works on GitHub Pages (see DEC-008)
 - Atomic Design component structure: atoms · molecules · organisms · templates · pages
 - Dark-theme only (see DEC-005)
-- AsteriskAnimation atom for load/generation waiting states
-- Governance docs: DECISIONS.md, ROADMAP.md, CONTRIBUTING.md, AGENTS.md, CONTEXT.md, SECURITY.md
-- GitHub Actions workflows: CI (lint, typecheck, build, gitleaks) + Pages deploy
-- `coi-serviceworker` bundled — enables threaded WASM on hosts without custom headers (GitHub Pages)
+- `AsteriskAnimation` atom for load / generation waiting states
+- Governance docs: DECISIONS.md, ROADMAP.md, CONTRIBUTING.md, AGENTS.md, CONTEXT.md, SECURITY.md, RELEASING.md
+- GitHub Actions workflows: CI (lint, typecheck, build, TruffleHog secret scan) + Pages deploy
 
 ### Known Limitations
 

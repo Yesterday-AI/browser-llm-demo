@@ -1,6 +1,6 @@
-// Scaffold-Point: dieses Catalog ist die swappable Source-of-Truth fuer
-// unterstuetzte Modelle. Fuer neue Projekte hier die MODEL_CATALOG-Eintraege
-// durch die gewuenschten litert-community-Varianten ersetzen.
+// Scaffold point: this catalog is the swappable source of truth for supported
+// models. Forks replace the MODEL_CATALOG entries with their preferred
+// litert-community variants.
 
 export type ModelMeta = {
   id: string;
@@ -10,23 +10,23 @@ export type ModelMeta = {
   file: string;
   sizeBytes: number;
   minRAMGB: number;
-  // Max combined input+output tokens (KV-cache allocation limit).
-  // Gemma 4 web-variant unterstuetzt nativ bis 128K, aber der KV-Cache skaliert
-  // linear und frisst GPU-Memory. Pro-Modell tuenbar.
+  // Max combined input + output tokens (KV cache allocation limit).
+  // The Gemma 4 web variant supports up to 128K natively, but the KV cache
+  // scales linearly in GPU memory. Tunable per model.
   maxTokens: number;
 };
 
 export const HF_BASE_URL = "https://huggingface.co";
 
-// maxTokens = default KV-cache-Groesse. User kann via Settings-Dialog
-// auf bis zu MODEL_MAX_TOKENS hochdrehen.
-export const MODEL_MAX_TOKENS = 131_072; // 128K — nativer Gemma-4-Web-Ceiling
+// maxTokens = default KV cache size. Users can bump up to MODEL_MAX_TOKENS
+// via the settings dialog.
+export const MODEL_MAX_TOKENS = 131_072; // 128K — native ceiling of the Gemma 4 web variant
 
 export const MODEL_CATALOG = {
   E2B: {
     id: "E2B",
     label: "Gemma 4 E2B",
-    description: "Schnell · 2.6 GB · ~4 GB RAM",
+    description: "Fast · 2.6 GB · ~4 GB RAM",
     repo: "litert-community/gemma-4-E2B-it-litert-lm",
     file: "gemma-4-E2B-it-web.task",
     sizeBytes: 2_800_000_000,
@@ -36,7 +36,7 @@ export const MODEL_CATALOG = {
   E4B: {
     id: "E4B",
     label: "Gemma 4 E4B",
-    description: "Klueger · 5 GB · ~8 GB RAM",
+    description: "Smarter · 5 GB · ~8 GB RAM",
     repo: "litert-community/gemma-4-E4B-it-litert-lm",
     file: "gemma-4-E4B-it-web.task",
     sizeBytes: 5_000_000_000,
