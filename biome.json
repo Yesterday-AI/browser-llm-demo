@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["dist", "node_modules", "public/wasm", "public/coi-serviceworker.js", ".vite"]
+    "ignore": ["dist", "node_modules", "public/wasm", ".vite"]
   },
   "formatter": {
     "enabled": true,

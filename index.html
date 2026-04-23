@@ -26,14 +26,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!--
-      COI-Service-Worker (gzuidhof/coi-serviceworker, MIT). Injiziert
-      Cross-Origin-Opener-Policy + Cross-Origin-Embedder-Policy Header client-
-      side, damit SharedArrayBuffer (MediaPipe threaded WASM) auch auf Hosts
-      ohne Custom-Header-Support laeuft (GitHub Pages, Netlify Free, …).
-      Muss VOR dem App-Bundle geladen werden.
-    -->
-    <script src="/coi-serviceworker.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

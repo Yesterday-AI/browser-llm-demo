@@ -33,26 +33,17 @@ export default defineConfig(({ command }) => ({
     react(),
     tailwindcss(),
     VitePWA({
+      // Custom SW that combines precache + COOP/COEP header injection.
+      // Required for SharedArrayBuffer on hosts without custom headers
+      // (GitHub Pages). See src/sw.ts for the full rationale.
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
       registerType: "autoUpdate",
       injectRegister: "auto",
-      workbox: {
+      injectManifest: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        runtimeCaching: [
-          {
-            urlPattern: /\/wasm\/.*\.(wasm|js)$/,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "mediapipe-wasm",
-              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 90 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.origin === "https://huggingface.co",
-            handler: "NetworkOnly",
-          },
-        ],
       },
       manifest: {
         name: PROJECT.name,

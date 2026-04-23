@@ -6,6 +6,10 @@
   <p><em>An LLM that doesn't phone home.</em></p>
 
   <p>
+    <strong><a href="https://yesterday-ai.github.io/browser-llm-demo/">▸ Try it live</a></strong>
+  </p>
+
+  <p>
     <a href="https://github.com/yesterday-ai/browser-llm-demo/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/yesterday-ai/browser-llm-demo/ci.yml?branch=main&label=CI"></a>
     <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-blue"></a>
     <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178c6">
