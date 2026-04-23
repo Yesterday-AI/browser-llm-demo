@@ -1,0 +1,72 @@
+{
+  "name": "browser-llm-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Scaffold for browser-local LLM chat apps. Runs Gemma 4 entirely in the browser via MediaPipe — no server, no cloud, no tokens. Atomic Design · PWA · multi-conversation · i18n.",
+  "keywords": [
+    "llm",
+    "gemma",
+    "mediapipe",
+    "browser-local",
+    "offline-first",
+    "pwa",
+    "react",
+    "vite",
+    "typescript",
+    "scaffold",
+    "privacy"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://yesterday-ai.github.io/browser-llm-demo/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yesterday-ai/browser-llm-demo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yesterday-ai/browser-llm-demo/issues"
+  },
+  "author": "Yesterday",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "predev": "node scripts/copy-wasm.mjs",
+    "dev": "vite --host",
+    "prebuild": "node scripts/copy-wasm.mjs",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@assistant-ui/react": "^0.11.8",
+    "@assistant-ui/react-markdown": "^0.11.0",
+    "@mediapipe/tasks-genai": "^0.10.26",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dexie": "^4.0.11",
+    "dexie-react-hooks": "^1.1.7",
+    "lucide-react": "^0.469.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remark-gfm": "^4.0.0",
+    "tailwind-merge": "^2.5.5",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6",
+    "vite-plugin-pwa": "^0.21.1"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

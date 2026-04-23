@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark light" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="browser-llm-demo" />
+
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+    <title>browser-llm-demo</title>
+    <meta
+      name="description"
+      content="Scaffold for browser-local LLM chat apps — runs Gemma 4 entirely in the browser via MediaPipe. No server, no cloud, no tokens."
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      COI-Service-Worker (gzuidhof/coi-serviceworker, MIT). Injiziert
+      Cross-Origin-Opener-Policy + Cross-Origin-Embedder-Policy Header client-
+      side, damit SharedArrayBuffer (MediaPipe threaded WASM) auch auf Hosts
+      ohne Custom-Header-Support laeuft (GitHub Pages, Netlify Free, …).
+      Muss VOR dem App-Bundle geladen werden.
+    -->
+    <script src="/coi-serviceworker.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
