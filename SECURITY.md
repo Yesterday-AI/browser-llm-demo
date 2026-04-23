@@ -4,7 +4,7 @@
 
 Please **do not open public issues** for security reports.
 
-Contact: `security@yesterday.ai` (PGP optional).
+Contact: `security@yesterday-ai.de` (PGP optional).
 
 We'll acknowledge within 72 hours and provide a timeline for fixes.
 
