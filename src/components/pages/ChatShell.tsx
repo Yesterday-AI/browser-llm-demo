@@ -6,7 +6,7 @@ import { useLlmStore } from "@/lib/llm-store.ts";
 import { preloadFileset } from "@/lib/mediapipe-llm.ts";
 import { MODEL_CATALOG, type ModelId } from "@/lib/model-catalog.ts";
 import { AssistantRuntimeProvider } from "@assistant-ui/react";
-import { PhoneOff } from "lucide-react";
+import { Unplug } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Tagline } from "../atoms/Tagline.tsx";
 import {
@@ -77,7 +77,7 @@ export function ChatShell() {
             <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-8">
               <h1 className="text-center text-xl font-medium leading-snug tracking-tight text-neutral-100 text-balance sm:text-2xl">
                 {t("hero.headline")}
-                <PhoneOff
+                <Unplug
                   aria-hidden="true"
                   className="ml-2 inline-block h-[0.75em] w-[0.75em] align-baseline text-neutral-500"
                 />
