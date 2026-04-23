@@ -1,5 +1,8 @@
+import { assetPath } from "@/lib/asset-path.ts";
 import { cn } from "@/lib/cn.ts";
 import { type VariantProps, cva } from "class-variance-authority";
+
+const ASSET_ICON = assetPath("icons/icon.svg");
 
 const brandVariants = cva("flex-none select-none", {
   variants: {
@@ -19,7 +22,7 @@ export type BrandMarkProps = VariantProps<typeof brandVariants> & {
 export function BrandMark({ size, className }: BrandMarkProps) {
   return (
     <img
-      src="/icons/icon.svg"
+      src={ASSET_ICON}
       alt=""
       aria-hidden="true"
       draggable={false}

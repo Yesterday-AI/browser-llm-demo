@@ -1,4 +1,5 @@
 import { FilesetResolver, LlmInference } from "@mediapipe/tasks-genai";
+import { assetPath } from "./asset-path.ts";
 import type { ModelId } from "./model-catalog.ts";
 import { MODEL_CATALOG, getCacheKey, getModelUrl } from "./model-catalog.ts";
 import { type DownloadProgress, loadModelWithCache } from "./opfs-cache.ts";
@@ -27,7 +28,7 @@ function nextSeed(): number {
   return Math.floor(Math.random() * 2 ** 31);
 }
 
-const WASM_PATH = "/wasm";
+const WASM_PATH = assetPath("wasm");
 
 // Gemma's decoder emits stop tokens as literal strings rather than halting.
 // Match Gemma turn-markers plus Unicode replacement + private-use-area glyphs.

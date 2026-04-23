@@ -1,5 +1,8 @@
+import { assetPath } from "@/lib/asset-path.ts";
 import { cn } from "@/lib/cn.ts";
 import { type VariantProps, cva } from "class-variance-authority";
+
+const DEFAULT_AVATAR = assetPath("icons/avatar.svg");
 
 const avatarVariants = cva("overflow-hidden rounded-full bg-neutral-900 object-cover", {
   variants: {
@@ -18,7 +21,7 @@ export type AvatarProps = VariantProps<typeof avatarVariants> & {
   className?: string;
 };
 
-export function Avatar({ src = "/icons/avatar.svg", alt, size, className }: AvatarProps) {
+export function Avatar({ src = DEFAULT_AVATAR, alt, size, className }: AvatarProps) {
   return (
     <img
       src={src}
