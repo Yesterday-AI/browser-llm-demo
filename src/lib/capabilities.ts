@@ -85,6 +85,14 @@ export function evaluateModel(modelId: ModelId, caps: Capabilities): ModelAvaila
     });
   }
 
+  // iOS (all browsers are WKWebView) Jetsam-kills tabs at ~800 MB RAM.
+  // A 2 GB+ model cannot fit in that budget even with PWA install + persist().
+  // Hard block — silent tab kills are worse UX than an up-front "no".
+  if (caps.isIOS && meta.sizeBytes > 800_000_000) {
+    warnings.push({ key: "caps.iosMemoryCap" });
+    allowed = false;
+  }
+
   return { modelId, allowed, warnings };
 }
 

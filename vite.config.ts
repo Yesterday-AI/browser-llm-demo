@@ -39,7 +39,9 @@ export default defineConfig(({ command }) => ({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "sw.ts",
-      registerType: "autoUpdate",
+      // Prompt on update instead of reloading silently — a silent reload
+      // during a failed multi-GB download looks identical to a crash on iOS.
+      registerType: "prompt",
       injectRegister: "auto",
       injectManifest: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest}"],

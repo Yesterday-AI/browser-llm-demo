@@ -35,6 +35,8 @@ export const en: Dict = {
   "caps.noWebgpu": "No WebGPU — inference runs on CPU/WASM, much slower.",
   "caps.saveData": "Data Saver is on — the large download still comes.",
   "caps.slowConnection": "Slow connection ({type}) — download of {sizeGB} will take a while.",
+  "caps.iosMemoryCap":
+    "iPhone/iPad: the WKWebView tab memory limit (~800 MB) silently kills downloads of this size. Use a desktop browser.",
 
   // Download progress
   "download.subtitle": "Gemma 4 · MediaPipe · browser-local",

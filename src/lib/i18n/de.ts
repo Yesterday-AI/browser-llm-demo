@@ -33,6 +33,8 @@ export const de = {
   "caps.noWebgpu": "Keine WebGPU — Inferenz laeuft auf CPU/WASM, deutlich langsamer.",
   "caps.saveData": "Data-Saver aktiv — grosser Download kommt trotzdem.",
   "caps.slowConnection": "Langsame Verbindung ({type}) — Download von {sizeGB} dauert lange.",
+  "caps.iosMemoryCap":
+    "iPhone/iPad: Tab-Speicherlimit (~800 MB) killt Downloads dieser Groesse lautlos. Desktop-Browser nutzen.",
 
   // Download progress
   "download.subtitle": "Gemma 4 · MediaPipe · browser-lokal",

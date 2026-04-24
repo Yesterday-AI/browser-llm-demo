@@ -105,7 +105,17 @@ export async function loadModelWithCache(
 
   onProgress?.({ loadedBytes: 0, totalBytes: expectedSize, phase: "downloading" });
 
-  const response = await fetch(url, { signal });
+  // Internal abort so a cache-write failure (OPFS quota, iOS Jetsam) can
+  // abort the network fetch too — both tee() branches share this signal,
+  // so MediaPipe's reader surfaces the error instead of silently stalling
+  // and triggering a SW-detected page reload.
+  const internalAbort = new AbortController();
+  if (signal) {
+    if (signal.aborted) internalAbort.abort(signal.reason);
+    else signal.addEventListener("abort", () => internalAbort.abort(signal.reason));
+  }
+
+  const response = await fetch(url, { signal: internalAbort.signal });
   if (!response.ok || !response.body) {
     throw new Error(`Download failed: HTTP ${response.status}`);
   }
@@ -132,7 +142,7 @@ export async function loadModelWithCache(
   const writable = await handle.createWritable();
 
   forCache
-    .pipeTo(writable, { signal })
+    .pipeTo(writable, { signal: internalAbort.signal })
     .then(async () => {
       await writeSidecar(root, cacheKey, contentLength);
       await requestPersistence();
@@ -144,6 +154,15 @@ export async function loadModelWithCache(
     })
     .catch(async (err) => {
       console.error("[opfs-cache] write failed", err);
+      // Abort the network fetch + client branch so MediaPipe stops reading
+      // partial content and the LoadState becomes an explicit error.
+      if (!internalAbort.signal.aborted) {
+        internalAbort.abort(
+          err instanceof Error
+            ? err
+            : new Error("Cache write failed (out of memory or storage quota)"),
+        );
+      }
       try {
         await root.removeEntry(cacheKey);
       } catch {
