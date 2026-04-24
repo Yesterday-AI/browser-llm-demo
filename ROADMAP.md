@@ -112,3 +112,19 @@ Prioritized features and extensions. Each entry has priority, status, why, const
 - **Constraints**: Budget for R2 storage (~EUR 1/month), own domain.
 - **Approach**: Public-read R2 bucket mirroring the model files; extend `MODEL_CATALOG` with an alternative `repo`/`url` source.
 - **Acceptance criteria**: Download source is switchable via env variable, no code changes needed to toggle R2.
+
+### Mobile-friendly sub-800 MB quantized models
+
+- **Status**: Not started
+- **Why**: iOS WKWebView Jetsam-kills tabs at ~800 MB RAM — Gemma 4 E2B (~2 GB) and E4B (~4 GB) are both physically unable to run on iPhone/iPad, regardless of PWA install or `persist()`. The iOS warning in `evaluateModel()` currently hard-blocks both on iOS. A sub-800 MB model would unblock mobile.
+- **Constraints**: Needs a quantization (INT4 or smaller) the MediaPipe `tasks-genai` runtime can load. Waiting for litert-community or similar to publish one.
+- **Approach**: Track the litert-community HF org for new `.task` releases; when a small model appears (e.g. Gemma 3 1B or Qwen 0.5B in INT4), add to `MODEL_CATALOG` with `sizeBytes < 800_000_000` so the iOS block auto-lifts.
+- **Acceptance criteria**: At least one model loads and runs on an iPhone 12 Pro without Jetsam; observed tok/s documented.
+
+### Native wrapper (Expo + llama.cpp) for mobile
+
+- **Status**: Not started
+- **Why**: The browser path is capped by WKWebView memory. Native apps get the full device RAM budget (~4-5 GB on iPhone 12 Pro) — so Gemma 4 E2B or even E4B becomes feasible on mobile.
+- **Constraints**: Significant scope change — this would be a sibling project, not a fork of this scaffold. Different distribution (App Store / TestFlight / sideload), different dev loop, different code layer (Swift/Kotlin wrapper around llama.cpp or MLX).
+- **Approach**: Expo with a custom native module exposing llama.cpp, sharing the chat UI via React Native (the i18n + taglines + atomic-design layer are portable). IndexedDB + OPFS swap for AsyncStorage + FileSystem.
+- **Acceptance criteria**: Gemma 4 E2B runs on iPhone 12 Pro via native app with > 10 tok/s; shared UI code with the browser scaffold reaches > 60 %.
